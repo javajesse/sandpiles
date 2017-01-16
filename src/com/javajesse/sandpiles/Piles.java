@@ -12,8 +12,8 @@ public class Piles {
 
         Main.TOPPLE = false;
 
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
+        for (int y = 1; y < height - 1; y++) {
+            for (int x = 1; x < width - 1; x++) {
 
                 if (piles[x][y] > 0) {
                     Main.overlay[x][y] = true;
@@ -24,35 +24,37 @@ public class Piles {
                     Main.TOPPLE = true;
                     long amount = piles[x][y];
 
+                    long amountRemoved = 0;
+
                     long amountToMove = 1;
-
                     if (Main.DROP_ALL_PILE) {
-                        amountToMove = (long) Math.ceil(amount / 4);
+                        amountToMove = (long) Math.floor(amount / 4);
                     }
 
-                    if (y > 0) {
+                    if (piles[x][y - 1] <= amount || Main.CAN_DISTRIBUTE_TO_LARGER_PILE) {
                         piles[x][y - 1] += amountToMove;
-                        amount -= amountToMove;
+                        amountRemoved += amountToMove;
                     }
-                    if (y < (height - 1)) {
+
+                    if (piles[x][y + 1] <= amount || Main.CAN_DISTRIBUTE_TO_LARGER_PILE) {
                         piles[x][y + 1] += amountToMove;
-                        amount -= amountToMove;
+                        amountRemoved += amountToMove;
                     }
 
-                    if (x > 0) {
+                    if (piles[x - 1][y] <= amount || Main.CAN_DISTRIBUTE_TO_LARGER_PILE) {
                         piles[x - 1][y] += amountToMove;
-                        amount -= amountToMove;
-                    }
-                    if (x < (width - 1)) {
-                        piles[x + 1][y] += amountToMove;
-                        amount -= amountToMove;
+                        amountRemoved += amountToMove;
                     }
 
-                    if (amount <= 0) {
-                        piles[x][y] = 0;
+                    if (piles[x + 1][y] <= amount || Main.CAN_DISTRIBUTE_TO_LARGER_PILE) {
+                        piles[x + 1][y] += amountToMove;
+                        amountRemoved += amountToMove;
                     }
-                    else {
-                        piles[x][y] = amount;
+
+                    if (amountRemoved > piles[x][y]) {
+                        piles[x][y] = 0;
+                    } else {
+                        piles[x][y] -= amountRemoved;
                     }
                 }
             }
@@ -83,10 +85,14 @@ public class Piles {
                 long val = piles[x][y];
                 if (val > 0) {
                     result += val;
-                    if (x < minx) minx = x;
-                    if (y < miny) miny = y;
-                    if (x > maxx) maxx = x;
-                    if (y > maxy) maxy = y;
+                    if (x < minx)
+                        minx = x;
+                    if (y < miny)
+                        miny = y;
+                    if (x > maxx)
+                        maxx = x;
+                    if (y > maxy)
+                        maxy = y;
                 }
                 if (val > Main.MAX && val > bigval) {
                     bigval = val;
@@ -96,7 +102,9 @@ public class Piles {
             }
         }
         int area = (maxx - minx) * (maxy - miny);
-        System.out.println(result + "  (" + minx + "," + miny + "),(" + maxx + "," + maxy + ") AERA = " + area + "   BIG = " + bigval + " @ (" + bigx + "," + bigy + ")");
+        System.out.println(
+            result + "  (" + minx + "," + miny + "),(" + maxx + "," + maxy + ") AERA = " + area + "   BIG = " + bigval + " @ (" + bigx + ","
+                + bigy + ")");
 
     }
 }

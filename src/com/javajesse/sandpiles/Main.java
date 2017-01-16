@@ -19,25 +19,35 @@ public class Main extends JComponent {
 
     static final int WIDTH = 800;
     static final int HEIGHT = 800;
+    static final int START_X = (WIDTH/2);
+    static final int START_Y = (HEIGHT/2);
 
     // initial setup
     static final int START_PILE = 1000000;
     static final int START_PILE_RADIUS = 0;
+
     static final int MAX = 3;
 
     // distribute only the top 4? Or split the pile into quarters and drop those sub-piles to neighbors?
     static final boolean DROP_ALL_PILE = false;
 
+    // should I move items to a pile if it's larger than I was to begin with?
+    static final boolean CAN_DISTRIBUTE_TO_LARGER_PILE = false;
+
+    static String getTitle() {
+        return "Piles  [drop_all="+DROP_ALL_PILE+", can_dist_to_larger="+CAN_DISTRIBUTE_TO_LARGER_PILE+", start="+START_PILE+", radius="+START_PILE_RADIUS+"]";
+    }
+
     // provides more smoothing vs specific control of each color value
-    static final boolean INCLUDE_NEIGHBORS_AS_GRADIENTS = false;
-    static int[] GRADIENT_MASK = { 0, 0, 1 };
+    static final boolean INCLUDE_NEIGHBORS_AS_GRADIENTS = true;
+    static double[] GRADIENT_MASK = { -0.5, 0.0, -1.0 };
 
     // the 5th element will be used for any pile > 3
     static Color[] COLORS = new Color[] {
 
-            new Color(250, 200, 100),
+            new Color(255, 255, 255),
+            new Color(250, 226, 125),
             new Color(250, 150, 75),
-            new Color(250, 100, 50),
             new Color(250, 50, 0),
             new Color(0, 0, 0) // new Color(100, 50, 0) is not so "harsh"
 
@@ -112,7 +122,7 @@ public class Main extends JComponent {
     private static void createAndShowGui() {
         Main mainPanel = new Main();
 
-        JFrame frame = new JFrame("Piles");
+        JFrame frame = new JFrame(getTitle());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(mainPanel);
         frame.pack();
@@ -126,8 +136,8 @@ public class Main extends JComponent {
 
         piles = new long[WIDTH][HEIGHT];
 
-        int centerx = WIDTH / 2;
-        int centery = HEIGHT / 2;
+        int centerx = START_X;
+        int centery = START_Y;
 
         piles[centerx][centery] = START_PILE;
 
@@ -200,10 +210,14 @@ public class Main extends JComponent {
             ratio = 1.0;
         }
 
-        int colorVal = (int) (200 * ratio);
-        colorVal = 255 - colorVal;
+        int colorValRed = (int) (250 * ratio * GRADIENT_MASK[0]);
+        if (colorValRed <0) colorValRed = 255 + colorValRed;
+        int colorValGreen = (int) (250 * ratio * GRADIENT_MASK[1]);
+        if (colorValGreen <0) colorValGreen = 255 + colorValGreen;
+        int colorValBlue = (int) (250 * ratio * GRADIENT_MASK[2]);
+        if (colorValBlue <0) colorValBlue = 255 + colorValBlue;
 
-        return new Color(GRADIENT_MASK[0], GRADIENT_MASK[1], GRADIENT_MASK[2]);
+        return new Color(colorValRed, colorValGreen, colorValBlue);
 
     }
 
