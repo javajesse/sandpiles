@@ -1,0 +1,101 @@
+
+public class Piles {
+
+    public Piles() {
+    }
+
+    public static long[][] getNextPiles(long[][] piles) {
+
+        int width = Main.WIDTH;
+        int height = Main.HEIGHT;
+
+        Main.TOPPLE = false;
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+
+                if (piles[x][y] > 0) {
+                    Main.overlay[x][y] = true;
+                }
+
+                if (piles[x][y] > Main.MAX) {
+
+                    Main.TOPPLE = true;
+                    long amount = piles[x][y];
+
+                    long amountToMove = 1;
+
+                    if (Main.DROP_ALL_PILE) {
+                        amountToMove = (long) Math.ceil(amount / 4);
+                    }
+
+                    if (y > 0) {
+                        piles[x][y - 1] += amountToMove;
+                        amount -= amountToMove;
+                    }
+                    if (y < (height - 1)) {
+                        piles[x][y + 1] += amountToMove;
+                        amount -= amountToMove;
+                    }
+
+                    if (x > 0) {
+                        piles[x - 1][y] += amountToMove;
+                        amount -= amountToMove;
+                    }
+                    if (x < (width - 1)) {
+                        piles[x + 1][y] += amountToMove;
+                        amount -= amountToMove;
+                    }
+
+                    if (amount <= 0) {
+                        piles[x][y] = 0;
+                    }
+                    else {
+                        piles[x][y] = amount;
+                    }
+                }
+            }
+
+        }
+
+        // at the very end, show some stats
+        if (!Main.TOPPLE) {
+            showSum(piles);
+        }
+
+        return piles;
+    }
+
+    public static void showSum(long[][] piles) {
+
+        int minx = Main.WIDTH;
+        int maxx = 0;
+        int miny = Main.HEIGHT;
+        int maxy = 0;
+        int bigx = 0;
+        int bigy = 0;
+        long bigval = 0;
+
+        long result = 0;
+        for (int y = 0; y < Main.WIDTH; y++) {
+            for (int x = 0; x < Main.HEIGHT; x++) {
+                long val = piles[x][y];
+                if (val > 0) {
+                    result += val;
+                    if (x < minx) minx = x;
+                    if (y < miny) miny = y;
+                    if (x > maxx) maxx = x;
+                    if (y > maxy) maxy = y;
+                }
+                if (val > Main.MAX && val > bigval) {
+                    bigval = val;
+                    bigx = x;
+                    bigy = y;
+                }
+            }
+        }
+        int area = (maxx - minx) * (maxy - miny);
+        System.out.println(result + "  (" + minx + "," + miny + "),(" + maxx + "," + maxy + ") AERA = " + area + "   BIG = " + bigval + " @ (" + bigx + "," + bigy + ")");
+
+    }
+}
