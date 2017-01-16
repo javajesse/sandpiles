@@ -1,3 +1,5 @@
+package com.javajesse.sandpiles;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -12,6 +14,9 @@ public class Main extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
+    // a delay between each iteration will keep your cpu fan from waking up your cat
+    static final int TIMER_DELAY = 1;
+
     static final int WIDTH = 800;
     static final int HEIGHT = 800;
 
@@ -20,23 +25,20 @@ public class Main extends JComponent {
     static final int START_PILE_RADIUS = 0;
     static final int MAX = 3;
 
-    // this delay can help keep your cpu fan from going full speed
-    static final int TIMER_DELAY = 1;
-
-    // drop just the top 4? Or split the pile into fourths and drop those sub-piles to neighbors?
+    // distribute only the top 4? Or split the pile into quarters and drop those sub-piles to neighbors?
     static final boolean DROP_ALL_PILE = false;
 
     // provides more smoothing vs specific control of each color value
     static final boolean INCLUDE_NEIGHBORS_AS_GRADIENTS = false;
     static int[] GRADIENT_MASK = { 0, 0, 1 };
 
-    // the 5th element will be used for any pile > 4
+    // the 5th element will be used for any pile > 3
     static Color[] COLORS = new Color[] {
 
-            new Color(250, 250, 0),
-            new Color(250, 200, 0),
-            new Color(250, 150, 0),
-            new Color(250, 100, 0),
+            new Color(250, 200, 100),
+            new Color(250, 150, 75),
+            new Color(250, 100, 50),
+            new Color(250, 50, 0),
             new Color(0, 0, 0) // new Color(100, 50, 0) is not so "harsh"
 
     };

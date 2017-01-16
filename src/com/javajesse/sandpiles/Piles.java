@@ -1,3 +1,4 @@
+package com.javajesse.sandpiles;
 
 public class Piles {
 
